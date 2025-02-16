@@ -3,8 +3,9 @@
 MainWindow::MainWindow(QWidget *parent):
     QWidget(parent)
 {
-      db.createConnection();
-      mWindDesign();
+    db.createConnection();
+    mWindDesign();
+    connect(btnLogIn,&QPushButton::clicked,this,&MainWindow::on_btnLogIn_button_clicked);
 }
 
 void MainWindow::mWindDesign()
@@ -58,5 +59,13 @@ void MainWindow::mWindDesign()
     lnEdPassword->setStyleSheet("font-size: 20px; border-radius: 10px; border: 2px solid black; padding: 5px; margin: 10px 100px 10px 100px;");
     btnLogIn->setStyleSheet("font-size: 20px; padding: 5px; margin: 10px 300px 200px 300px;");
 }
+
+void MainWindow::on_btnLogIn_button_clicked()
+{
+    newLogin = lnEdLogin->text();
+    newPassword = lnEdPassword->text();
+    db.autoUser(newLogin,newPassword);
+}
+
 
 MainWindow:: ~MainWindow(){}

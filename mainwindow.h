@@ -18,7 +18,12 @@ class MainWindow: public QWidget
 public:
     MainWindow(QWidget *parent = nullptr);
     ~MainWindow();
+
     void mWindDesign();
+
+private slots:
+    void on_btnLogIn_button_clicked();
+
 private:
     const int WIDTH = 800;
     const int HEIGHT = 600;
@@ -28,7 +33,10 @@ private:
     QLineEdit *lnEdLogin, *lnEdPassword;
     QPushButton *btnLogIn;
     QHBoxLayout* layoutHeader;
+
     DataBase db;
+
+    QString newLogin, newPassword;
 
 };
 
