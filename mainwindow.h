@@ -1,5 +1,6 @@
 #ifndef MAINWINDOW_H
 #define MAINWINDOW_H
+#include "database.h"
 #include <QWidget>
 #include <QLabel>
 #include <QLayout>
@@ -8,8 +9,6 @@
 #include <QPixmap>
 #include <QPainter>
 #include <qDebug>
-#include <QtSql>
-#include <QSqlDatabase>
 
 
 
@@ -19,6 +18,7 @@ class MainWindow: public QWidget
 public:
     MainWindow(QWidget *parent = nullptr);
     ~MainWindow();
+    void mWindDesign();
 private:
     const int WIDTH = 800;
     const int HEIGHT = 600;
@@ -28,10 +28,8 @@ private:
     QLineEdit *lnEdLogin, *lnEdPassword;
     QPushButton *btnLogIn;
     QHBoxLayout* layoutHeader;
+    DataBase db;
 
-    QSqlDatabase db;
-    QString db_input;
-    QSqlQuery query;
 };
 
 #endif // MAINWINDOW_H

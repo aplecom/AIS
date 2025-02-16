@@ -3,74 +3,60 @@
 MainWindow::MainWindow(QWidget *parent):
     QWidget(parent)
 {
-      db = QSqlDatabase::addDatabase("QPSQL");
-      db.setDatabaseName("Hospital");
-      db.setUserName("admin");
-      db.setPassword("admin");
-      db.setHostName("localhost");
-      if(!db.open())
-      {
-        qDebug()<<"Не удалось подключиться к БД";
-        qDebug()<<db.lastError().text();
-      }
-      else
-      {
-        query = QSqlQuery(db);
-        qDebug()<<"Красавчик! БД в твоей власти!";
-      }
+      db.createConnection();
+      mWindDesign();
+}
 
-      if(db.tables().contains("Acaunt"))
-          qDebug()<<"Таблица сущ";
+void MainWindow::mWindDesign()
+{
+    QPixmap background(":/img/img/background.jpg");
+    QPixmap logo(":/img/img/logo.png");
+    logo = logo.scaled(80, 80, Qt::KeepAspectRatio);
 
-      QPixmap background(":/img/img/background.jpg");
-      QPixmap logo(":/img/img/logo.png");
-      logo = logo.scaled(80, 80, Qt::KeepAspectRatio);
+    QPalette  palette;
+    palette.setBrush(QPalette::Background, QBrush(background));
+    setPalette(palette);
 
-      QPalette  palette;
-      palette.setBrush(QPalette::Background, QBrush(background));
-      setPalette(palette);
-
-      setWindowTitle("Регистратурка");
-      setMinimumSize(WIDTH,HEIGHT);
+    setWindowTitle("Регистратурка");
+    setMinimumSize(WIDTH,HEIGHT);
 
 
-      layout = new QVBoxLayout(this);
-      layoutHeader = new QHBoxLayout();
-      lbHeader = new QLabel("Регистратурка",this);
-      lnEdLogin = new QLineEdit(this);
-      lnEdPassword = new QLineEdit(this);
-      btnLogIn = new QPushButton("Войти",this);
+    layout = new QVBoxLayout(this);
+    layoutHeader = new QHBoxLayout();
+    lbHeader = new QLabel("Регистратурка",this);
+    lnEdLogin = new QLineEdit(this);
+    lnEdPassword = new QLineEdit(this);
+    btnLogIn = new QPushButton("Войти",this);
 
-      lbLogo = new QLabel(this);
-      lbLogo->setPixmap(logo);
-      lbLogo->setFixedSize(80,80);
-
-
-      layoutHeader->addWidget(lbLogo);
-      layoutHeader->addWidget(lbHeader);
-      layout->addLayout(layoutHeader);
-      layout->addWidget(lnEdLogin);
-      layout->addWidget(lnEdPassword);
-      layout->addWidget(btnLogIn);
-
-      lnEdLogin->setPlaceholderText("Логин");
-      lnEdPassword->setPlaceholderText("Пароль");
-
-      layoutHeader->setAlignment(Qt::AlignCenter);
-      lbLogo->setAlignment(Qt::AlignCenter);
-      lbHeader->setAlignment(Qt::AlignCenter);
-
-      lnEdLogin->setAlignment(Qt::AlignCenter);
-      lnEdPassword->setAlignment(Qt::AlignCenter);
-      lnEdPassword->setEchoMode(QLineEdit::Password);
+    lbLogo = new QLabel(this);
+    lbLogo->setPixmap(logo);
+    lbLogo->setFixedSize(80,80);
 
 
-      lbLogo->setStyleSheet("margin: 0px 0px 0px 0px;");
-      lbHeader->setStyleSheet("font-size: 40px;");
-      lnEdLogin->setStyleSheet("font-size: 20px; border-radius: 10px; border: 2px solid black; padding: 5px; margin: 0px 100px 10px 100px;");
-      lnEdPassword->setStyleSheet("font-size: 20px; border-radius: 10px; border: 2px solid black; padding: 5px; margin: 10px 100px 10px 100px;");
-      btnLogIn->setStyleSheet("font-size: 20px; padding: 5px; margin: 10px 300px 200px 300px;");
+    layoutHeader->addWidget(lbLogo);
+    layoutHeader->addWidget(lbHeader);
+    layout->addLayout(layoutHeader);
+    layout->addWidget(lnEdLogin);
+    layout->addWidget(lnEdPassword);
+    layout->addWidget(btnLogIn);
 
+    lnEdLogin->setPlaceholderText("Логин");
+    lnEdPassword->setPlaceholderText("Пароль");
+
+    layoutHeader->setAlignment(Qt::AlignCenter);
+    lbLogo->setAlignment(Qt::AlignCenter);
+    lbHeader->setAlignment(Qt::AlignCenter);
+
+    lnEdLogin->setAlignment(Qt::AlignCenter);
+    lnEdPassword->setAlignment(Qt::AlignCenter);
+    lnEdPassword->setEchoMode(QLineEdit::Password);
+
+
+    lbLogo->setStyleSheet("margin: 0px 0px 0px 0px;");
+    lbHeader->setStyleSheet("font-size: 40px;");
+    lnEdLogin->setStyleSheet("font-size: 20px; border-radius: 10px; border: 2px solid black; padding: 5px; margin: 0px 100px 10px 100px;");
+    lnEdPassword->setStyleSheet("font-size: 20px; border-radius: 10px; border: 2px solid black; padding: 5px; margin: 10px 100px 10px 100px;");
+    btnLogIn->setStyleSheet("font-size: 20px; padding: 5px; margin: 10px 300px 200px 300px;");
 }
 
 MainWindow:: ~MainWindow(){}
