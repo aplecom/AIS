@@ -24,7 +24,7 @@ void DataBase::createConnection()
     }
 }
 
-bool DataBase::autoUser(QString& newLogin, QString& newPassword)
+QString DataBase::autoUser(QString& newLogin, QString& newPassword)
 {
     QSqlRecord rec;
     QString str_t = "SELECT login, password, (SELECT name FROM public.positions WHERE id = s.positions_id) AS position "
@@ -34,7 +34,7 @@ bool DataBase::autoUser(QString& newLogin, QString& newPassword)
 
     db_input = str_t.arg(newLogin);
     if (!execQuery(query,db_input))
-        return false;
+        return "Ошибка";
 
     query.next();
     rec = query.record();
@@ -49,15 +49,14 @@ bool DataBase::autoUser(QString& newLogin, QString& newPassword)
         qDebug()<<"Ошибка входа по данным:"
                   "логин: "<<newLogin<<
                   "пароль: "<<newPassword;
-        return false;
+        return "Ошибка";
     }
     else
     {
-
         qDebug()<<"Удалось войти в учетную запись, как" <<position<<": "
                   "логин: "<<login<<
                   "пароль: "<<password;
-        return true;
+        return position;
     }
 
 }
@@ -72,7 +71,4 @@ bool DataBase::execQuery(QSqlQuery& query, QString& db_input)
         return true;
 }
 
-DataBase::~DataBase()
-{
-
-}
+DataBase::~DataBase(){}

@@ -1,6 +1,7 @@
 #ifndef MAINWINDOW_H
 #define MAINWINDOW_H
 #include "database.h"
+#include "admin.h"
 #include <QWidget>
 #include <QLabel>
 #include <QLayout>
@@ -8,8 +9,6 @@
 #include <QPushButton>
 #include <QPixmap>
 #include <QPainter>
-#include <qDebug>
-
 
 
 class MainWindow: public QWidget
@@ -38,6 +37,7 @@ private:
 
     QString newLogin, newPassword;
 
+    Admin* admin;
 };
 
 #endif // MAINWINDOW_H

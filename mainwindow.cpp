@@ -21,10 +21,9 @@ void MainWindow::mWindDesign()
     setWindowTitle("Регистратурка");
     setMinimumSize(WIDTH,HEIGHT);
 
-
     layout = new QVBoxLayout(this);
     layoutHeader = new QHBoxLayout();
-    lbHeader = new QLabel("Регистратурка",this);
+    lbHeader = new QLabel("Регистратура",this);
     lnEdLogin = new QLineEdit(this);
     lnEdPassword = new QLineEdit(this);
     btnLogIn = new QPushButton("Войти",this);
@@ -52,7 +51,6 @@ void MainWindow::mWindDesign()
     lnEdPassword->setAlignment(Qt::AlignCenter);
     lnEdPassword->setEchoMode(QLineEdit::Password);
 
-
     lbLogo->setStyleSheet("margin: 0px 0px 0px 0px;");
     lbHeader->setStyleSheet("font-size: 40px;");
     lnEdLogin->setStyleSheet("font-size: 20px; border-radius: 10px; border: 2px solid black; padding: 5px; margin: 0px 100px 10px 100px;");
@@ -64,8 +62,14 @@ void MainWindow::on_btnLogIn_button_clicked()
 {
     newLogin = lnEdLogin->text();
     newPassword = lnEdPassword->text();
-    db.autoUser(newLogin,newPassword);
+    if(db.autoUser(newLogin,newPassword) == "Админ")
+    {
+        this->close();
+        admin = new Admin(db,nullptr);
+        admin->show();
+    }
 }
 
-
-MainWindow:: ~MainWindow(){}
+MainWindow:: ~MainWindow(){
+    delete admin;
+}

@@ -9,7 +9,7 @@ public:
     DataBase();
     ~DataBase();
     void createConnection();
-    bool autoUser(QString& newLogin, QString& newPassword);
+    QString autoUser(QString& newLogin, QString& newPassword);
     bool execQuery(QSqlQuery& query, QString& db_input);
 private:
     QSqlDatabase db;
