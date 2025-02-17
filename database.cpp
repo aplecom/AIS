@@ -27,11 +27,13 @@ void DataBase::createConnection()
 bool DataBase::autoUser(QString& newLogin, QString& newPassword)
 {
     QSqlRecord rec;
-    QString str_t = "SELECT * FROM Admins WHERE login = '%1'";
-    QString login,password;
+    QString str_t = "SELECT login, password, (SELECT name FROM public.positions WHERE id = s.positions_id) AS position "
+                    "FROM public.staff s "
+                    "WHERE login = '%1'";
+    QString login,password,position;
 
     db_input = str_t.arg(newLogin);
-    if (execQuery(query,db_input))
+    if (!execQuery(query,db_input))
         return false;
 
     query.next();
@@ -39,20 +41,23 @@ bool DataBase::autoUser(QString& newLogin, QString& newPassword)
 
     login = query.value(rec.indexOf("login")).toString();
     password = query.value(rec.indexOf("password")).toString();
+    position = query.value(rec.indexOf("position")).toString();
 
-    if(newLogin==login && newPassword==password)
+    if(newLogin!=login || newPassword!=password ||
+            login=="" || password=="")
     {
-        qDebug()<<"Удалось войти в учетную запись:"
-                  "логин: "<<login<<
-                  "пароль: "<<password;
-        return true;
+        qDebug()<<"Ошибка входа по данным:"
+                  "логин: "<<newLogin<<
+                  "пароль: "<<newPassword;
+        return false;
     }
     else
     {
-        qDebug()<<"Ошибка входа по данным:"
+
+        qDebug()<<"Удалось войти в учетную запись, как" <<position<<": "
                   "логин: "<<login<<
-                   "пароль: "<<password;
-        return false;
+                  "пароль: "<<password;
+        return true;
     }
 
 }
@@ -63,6 +68,8 @@ bool DataBase::execQuery(QSqlQuery& query, QString& db_input)
         qDebug()<<"Ошибка запроса: "<<query.lastError().text();
         return false;
     }
+    else
+        return true;
 }
 
 DataBase::~DataBase()
