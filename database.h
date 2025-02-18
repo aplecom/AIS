@@ -11,6 +11,7 @@ public:
     void createConnection();
     QString autoUser(QString& newLogin, QString& newPassword);
     bool execQuery(QSqlQuery& query, QString& db_input);
+    QStringList getDoctorsList();
 private:
     QSqlDatabase db;
     QString db_input;

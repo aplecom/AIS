@@ -7,7 +7,10 @@
 #include <QPixmap>
 #include <QPainter>
 #include <QPushButton>
-
+#include <QLayout>
+#include <QLabel>
+#include <QStackedWidget>
+#include <QListWidget>
 
 class Admin: public QWidget
 {
@@ -23,7 +26,13 @@ private:
     const int HEIGHT = 800;
 
     DataBase &db;
-    QPushButton *btnDoctors, *btnPatients, *meetings;
+    QPushButton *btnDoctors, *btnPatients, *btnMeetings, *btnExit;
+    QGridLayout* gLayout;
+    QVBoxLayout* vLayout;
+    QLabel* lbLogo;
+    QStackedWidget* stackWidget;
+    QListWidget* lWDoctors;
+
 };
 
 #endif // ADMIN_H

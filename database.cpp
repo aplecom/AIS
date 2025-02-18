@@ -71,4 +71,35 @@ bool DataBase::execQuery(QSqlQuery& query, QString& db_input)
         return true;
 }
 
+QStringList DataBase::getDoctorsList()
+{
+    if(!db.isOpen())
+        qDebug()<<"БД ЗАКРЫЛАСЬ";
+    else
+        qDebug()<<"БД ВСЕЩЕ ЕЩЕ ЖИВЕТ";
+
+    QSqlRecord rec;
+    QString str_t = "SELECT name, last_name, specialization FROM public.doctors";
+
+    db_input = str_t;
+
+    if(!execQuery(query,db_input))
+        return QStringList("Не удалось загрузить данные");
+
+    QStringList doctorsList;
+
+    while(query.next())
+    {
+        rec = query.record();
+        QString doctorName = query.value(rec.indexOf("name")).toString();
+        QString doctorLastName = query.value(rec.indexOf("last_name")).toString();
+        QString doctorSpecialization = query.value(rec.indexOf("specialization")).toString();
+
+        QString doctorInfo = doctorName + " " + doctorLastName + " - " + doctorSpecialization;
+        doctorsList.append(doctorInfo);
+    }
+
+    return doctorsList;
+}
+
 DataBase::~DataBase(){}
