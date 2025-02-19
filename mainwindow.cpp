@@ -53,7 +53,7 @@ void MainWindow::mWindDesign()
 
     lbLogo->setStyleSheet("margin: 0px 0px 0px 0px;");
     lbHeader->setStyleSheet("font-size: 40px;");
-    lnEdLogin->setStyleSheet("font-size: 20px; border-radius: 10px; border: 2px solid black; padding: 5px; margin: 0px 100px 10px 100px;");
+    lnEdLogin->setStyleSheet("font-size: 20px; border-radius: 10px; border: 2px solid black ; padding: 5px; margin: 0px 100px 10px 100px;");
     lnEdPassword->setStyleSheet("font-size: 20px; border-radius: 10px; border: 2px solid black; padding: 5px; margin: 10px 100px 10px 100px;");
     btnLogIn->setStyleSheet("font-size: 20px; padding: 5px; margin: 10px 300px 200px 300px;");
 

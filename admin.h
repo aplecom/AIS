@@ -20,6 +20,8 @@ public:
     ~Admin();
 
     void admDesign();
+private slots:
+    void on_btnDoctors_clicked();
 
 private:
     const int WIDTH = 1200;

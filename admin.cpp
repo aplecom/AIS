@@ -4,6 +4,7 @@ Admin::Admin(DataBase &database, QWidget* parent)
     :QWidget(parent), db(database)
 {
     admDesign();
+    connect(btnDoctors,&QPushButton::clicked,this,&Admin::on_btnDoctors_clicked);
 }
 
 void Admin::admDesign()
@@ -43,13 +44,30 @@ void Admin::admDesign()
     gLayout->addLayout(vLayout,0,0,4,1);
     gLayout->addWidget(stackWidget,0,1,4,3);
 
-    QStringList listDoctoes = db.getDoctorsList();
     lWDoctors = new QListWidget();
-
-    lWDoctors->addItems(listDoctoes);
-
     stackWidget->addWidget(lWDoctors);
 
+    this->setStyleSheet(
+    "QPushButton {"
+    " font-size: 20px;"
+    " border-radius: 10px;"
+    " border: 2px solid black;"
+    " padding: 10px;"
+    " background-color: white;"
+    "}"
+    " QPushButton:hover {"
+    " background-color: rgb(3, 198, 252);"
+    " }"
+    " QPushButton:pressed {"
+    " background-color: rgb(3, 240, 252);"
+    "}");
+}
+
+void Admin::on_btnDoctors_clicked()
+{
+    QStringList listDoctors = db.getDoctorsList();
+    lWDoctors->clear();
+    lWDoctors->addItems(listDoctors);
 }
 
 Admin::~Admin() {}
