@@ -1,10 +1,12 @@
 #include "admin.h"
 
-Admin::Admin(DataBase &database, QWidget* parent)
-    :QWidget(parent), db(database)
+Admin::Admin(DataBase &database, QWidget* mainWindow, QWidget* parent)
+    : QWidget(parent), db(database), mainWindow(mainWindow)
 {
     admDesign();
     connect(btnDoctors,&QPushButton::clicked,this,&Admin::on_btnDoctors_clicked);
+    connect(btnPatients, &QPushButton::clicked, this, &Admin::on_btnPatients_clicked);
+    connect(btnExit,&QPushButton::clicked, this, &Admin::on_btnExit_clicked);
 }
 
 void Admin::admDesign()
@@ -14,7 +16,7 @@ void Admin::admDesign()
 
     QPixmap background(":/img/img/background.jpg");
     QPixmap logo(":/img/img/logo.png");
-    logo = logo.scaled(80, 80, Qt::KeepAspectRatio);
+    logo = logo.scaled(200, 200, Qt::KeepAspectRatio);
 
     QPalette  palette;
     palette.setBrush(QPalette::Background, QBrush(background));
@@ -25,7 +27,6 @@ void Admin::admDesign()
 
     btnDoctors = new QPushButton("Доктора",this);
     btnPatients =  new QPushButton("Пациенты",this);
-    btnMeetings= new QPushButton("Приемы",this);
     btnExit =new QPushButton("Выйти",this);
 
     lbLogo = new QLabel(this);
@@ -33,12 +34,11 @@ void Admin::admDesign()
     stackWidget = new QStackedWidget(this);
 
     lbLogo->setPixmap(logo);
-    lbLogo->setFixedSize(80,80);
+    lbLogo->setFixedSize(230,230);
 
     vLayout->addWidget(lbLogo);
     vLayout->addWidget(btnDoctors);
     vLayout->addWidget(btnPatients);
-    vLayout->addWidget(btnMeetings);
     vLayout->addWidget(btnExit);
 
     gLayout->addLayout(vLayout,0,0,4,1);
@@ -46,6 +46,11 @@ void Admin::admDesign()
 
     lWDoctors = new QListWidget();
     stackWidget->addWidget(lWDoctors);
+    lwPatient = new QListWidget();
+    stackWidget->addWidget(lwPatient);
+
+    lbLogo->setStyleSheet("margin-left: 30px; ");
+    stackWidget->setStyleSheet("font-size: 20px; ");
 
     this->setStyleSheet(
     "QPushButton {"
@@ -68,6 +73,21 @@ void Admin::on_btnDoctors_clicked()
     QStringList listDoctors = db.getDoctorsList();
     lWDoctors->clear();
     lWDoctors->addItems(listDoctors);
+    stackWidget->setCurrentWidget(lWDoctors);
+}
+
+void Admin::on_btnPatients_clicked()
+{
+    QStringList listPatient = db.getPatientList();
+    lwPatient->clear();
+    lwPatient->addItems(listPatient);
+    stackWidget->setCurrentWidget(lwPatient);
+}
+
+void Admin::on_btnExit_clicked()
+{
+    this->close();
+    if(mainWindow) mainWindow->show();
 }
 
 Admin::~Admin() {}

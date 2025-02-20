@@ -73,10 +73,6 @@ bool DataBase::execQuery(QSqlQuery& query, QString& db_input)
 
 QStringList DataBase::getDoctorsList()
 {
-    if(!db.isOpen())
-        qDebug()<<"БД ЗАКРЫЛАСЬ";
-    else
-        qDebug()<<"БД ВСЕЩЕ ЕЩЕ ЖИВЕТ";
 
     QSqlRecord rec;
     QString str_t = "SELECT name, last_name, specialization FROM public.doctors";
@@ -100,6 +96,31 @@ QStringList DataBase::getDoctorsList()
     }
 
     return doctorsList;
+}
+
+QStringList DataBase::getPatientList()
+{
+    QSqlRecord rec;
+    QString str_t = "SELECT name, last_name, date_birth FROM public.Patient";
+
+    db_input = str_t;
+
+    if(!execQuery(query,db_input))
+        return QStringList("Не удалось загрузить данные");
+
+    QStringList patientList;
+
+    while(query.next())
+    {
+        rec = query.record();
+        QString name = query.value(rec.indexOf("name")).toString();
+        QString last_name =   query.value(rec.indexOf("last_name")).toString();
+        QString phone =  query.value(rec.indexOf("date_birth")).toString();;
+
+        QString patientInfo = name + " " + last_name + " | Дата рождения: " + phone;
+        patientList.append(patientInfo);
+    }
+    return patientList;
 }
 
 DataBase::~DataBase(){}

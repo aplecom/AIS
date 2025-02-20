@@ -71,7 +71,7 @@ void MainWindow::on_btnLogIn_button_clicked()
     if(db.autoUser(newLogin,newPassword) == "Админ")
     {
         this->close();
-        admin = new Admin(db,nullptr);
+        admin = new Admin(db,this);
         admin->show();
     }
 }

@@ -12,6 +12,7 @@ public:
     QString autoUser(QString& newLogin, QString& newPassword);
     bool execQuery(QSqlQuery& query, QString& db_input);
     QStringList getDoctorsList();
+    QStringList getPatientList();
 private:
     QSqlDatabase db;
     QString db_input;

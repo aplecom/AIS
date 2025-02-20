@@ -16,24 +16,28 @@ class Admin: public QWidget
 {
     Q_OBJECT
 public:
-    Admin(DataBase &database, QWidget* parent = nullptr);
+    Admin(DataBase &database, QWidget* mainWindow, QWidget* parent = nullptr);
     ~Admin();
 
     void admDesign();
 private slots:
     void on_btnDoctors_clicked();
+    void on_btnPatients_clicked();
+    void on_btnExit_clicked();
 
 private:
     const int WIDTH = 1200;
     const int HEIGHT = 800;
 
+    QWidget* mainWindow;
     DataBase &db;
-    QPushButton *btnDoctors, *btnPatients, *btnMeetings, *btnExit;
+    QPushButton *btnDoctors, *btnPatients, *btnExit;
     QGridLayout* gLayout;
     QVBoxLayout* vLayout;
     QLabel* lbLogo;
     QStackedWidget* stackWidget;
     QListWidget* lWDoctors;
+    QListWidget* lwPatient;
 
 };
 
