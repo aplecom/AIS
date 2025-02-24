@@ -11,6 +11,7 @@
 #include <QLabel>
 #include <QStackedWidget>
 #include <QListWidget>
+#include <QLineEdit>
 
 class Admin: public QWidget
 {
@@ -25,9 +26,10 @@ private slots:
     void on_btnPatients_clicked();
     void on_btnExit_clicked();
     void showMainMenu();
-    void on_btnAddPatient(); // не в разработке
+    void on_btnAddPatient1();
     void on_btnRemovePatient();
-
+    void on_btnAddPatient2();
+    void on_btnBackPatInList();
 
 private:
     const int WIDTH = 1200;
@@ -39,19 +41,20 @@ private:
     QPushButton* btnDoctors;
     QPushButton* btnPatients;
     QPushButton* btnExit;
-    QPushButton* btnBack1;
-    QPushButton* btnBack2;
-    QPushButton* btnAddPatient;
+    QPushButton* btnBackDocInMenu;
+    QPushButton* btnBackPacInMenu;
+    QPushButton* btnAddPatient1;
     QPushButton* btnRemovePatient;
+    QPushButton* btnAddPatient2;
+    QPushButton* btnBackPatInList;
 
     QGridLayout* gLayout;
     QVBoxLayout* doctorsMenuLayout;
-    QVBoxLayout* patienstMenuMenuLayout;
+    QVBoxLayout* patienstMenuLayout;
     QVBoxLayout* mainMenuLayout;
+    QVBoxLayout* patientsAddLayout;
 
-    QLabel* lbLogo;
-
-    QStackedWidget* stackWidget;
+    QStackedWidget* infoStack;
     QStackedWidget* menuStack;
 
     QListWidget* lWDoctors;
@@ -60,6 +63,29 @@ private:
     QWidget* mainMenu;
     QWidget* doctorMenu;
     QWidget* patientMenu;
+    QWidget* patientAddMenu;
+    QWidget* infoAddPatient;
+
+    QLineEdit* lEditName;
+    QLineEdit* lEditLastName;
+    QLineEdit* lEditDate;
+    QLineEdit* lEditPhone;
+
+    QLabel* lbLogo;
+    QLabel* lbName;
+    QLabel* lbLastName;
+    QLabel* lbDate;
+    QLabel* lbPhone;
+
+    QHBoxLayout* nameLt;
+    QHBoxLayout* lastNameLt;
+    QHBoxLayout* dateLt;
+    QHBoxLayout* phoneLt;
+
+    QVBoxLayout* addPatLt;
+
+    void design_infoAddPatient();
+
 
 
 };

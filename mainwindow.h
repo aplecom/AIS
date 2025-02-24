@@ -5,7 +5,6 @@
 #include <QWidget>
 #include <QLabel>
 #include <QLayout>
-#include <QLineEdit>
 #include <QPushButton>
 #include <QPixmap>
 #include <QPainter>

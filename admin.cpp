@@ -7,9 +7,12 @@ Admin::Admin(DataBase &database, QWidget* mainWindow, QWidget* parent)
     connect(btnDoctors,&QPushButton::clicked,this,&Admin::on_btnDoctors_clicked);
     connect(btnPatients, &QPushButton::clicked, this, &Admin::on_btnPatients_clicked);
     connect(btnExit,&QPushButton::clicked, this, &Admin::on_btnExit_clicked);
-    connect(btnBack1,&QPushButton::clicked,this,&Admin::showMainMenu);
-    connect(btnBack2,&QPushButton::clicked,this,&Admin::showMainMenu);
+    connect(btnBackDocInMenu,&QPushButton::clicked,this,&Admin::showMainMenu);
+    connect(btnBackPacInMenu,&QPushButton::clicked,this,&Admin::showMainMenu);
     connect(btnRemovePatient,&QPushButton::clicked,this,&Admin::on_btnRemovePatient);
+    connect(btnAddPatient1,&QPushButton::clicked,this,&Admin::on_btnAddPatient1);
+    connect(btnAddPatient2,&QPushButton::clicked,this,&Admin::on_btnAddPatient2);
+    connect(btnBackPatInList, &QPushButton::clicked,this, &Admin::on_btnBackPatInList);
 }
 
 void Admin::admDesign()
@@ -24,7 +27,6 @@ void Admin::admDesign()
     QPalette  palette;
     palette.setBrush(QPalette::Background, QBrush(background));
     setPalette(palette);
-
 
     menuStack = new QStackedWidget(this);
     mainMenu = new QWidget();
@@ -47,36 +49,39 @@ void Admin::admDesign()
 
     doctorMenu = new QWidget();
     doctorsMenuLayout = new QVBoxLayout(doctorMenu);
-    btnBack1 = new QPushButton("Назад", this);
-    doctorsMenuLayout->addWidget(btnBack1);
+    btnBackDocInMenu = new QPushButton("Назад", this);
+    doctorsMenuLayout->addWidget(btnBackDocInMenu);
 
     patientMenu = new QWidget();
-    patienstMenuMenuLayout = new QVBoxLayout(patientMenu);
-    btnBack2 = new QPushButton("Назад", this);
-    btnAddPatient = new QPushButton("Добавить", this);
+    patienstMenuLayout = new QVBoxLayout(patientMenu);
+    btnBackPacInMenu = new QPushButton("Назад", this);
+    btnAddPatient1 = new QPushButton("Добавить", this);
     btnRemovePatient = new QPushButton("Удалить", this);
-    patienstMenuMenuLayout->addWidget(btnAddPatient);
-    patienstMenuMenuLayout->addWidget(btnRemovePatient);
-    patienstMenuMenuLayout->addWidget(btnBack2);
+    patienstMenuLayout->addWidget(btnAddPatient1);
+    patienstMenuLayout->addWidget(btnRemovePatient);
+    patienstMenuLayout->addWidget(btnBackPacInMenu);
 
     menuStack->addWidget(mainMenu);
     menuStack->addWidget(doctorMenu);
     menuStack->addWidget(patientMenu);
+
     menuStack->setSizePolicy(QSizePolicy::Fixed,QSizePolicy::Expanding);
 
-    stackWidget = new QStackedWidget(this);
+    infoStack = new QStackedWidget(this);
 
     lWDoctors = new QListWidget();
     lwPatient = new QListWidget();
-    stackWidget->addWidget(lWDoctors);
-    stackWidget->addWidget(lwPatient);
+    infoAddPatient = new QWidget();
+    infoStack->addWidget(lWDoctors);
+    infoStack->addWidget(lwPatient);
+    infoStack->addWidget(infoAddPatient);
 
     gLayout = new QGridLayout(this);
-    gLayout->addWidget(stackWidget,0,1,4,3);
+    gLayout->addWidget(infoStack,0,1,4,3);
     gLayout->addWidget(menuStack,0,0,4,1);
 
     lbLogo->setStyleSheet("margin-left: 30px; ");
-    stackWidget->setStyleSheet("font-size: 20px; ");
+    infoStack->setStyleSheet("font-size: 20px; ");
 
     this->setStyleSheet(
     "QPushButton {"
@@ -92,13 +97,25 @@ void Admin::admDesign()
     " QPushButton:pressed {"
     " background-color: rgb(3, 240, 252);"
     "}");
+
+    patientAddMenu = new QWidget();
+    patientsAddLayout = new QVBoxLayout(patientAddMenu);
+    btnAddPatient2 = new QPushButton("+",this);
+    btnBackPatInList = new QPushButton("Назад к списку",this);
+    patientsAddLayout->addWidget(btnAddPatient2);
+    patientsAddLayout->addWidget(btnBackPatInList);
+
+    menuStack->addWidget(patientAddMenu);
+
+    design_infoAddPatient();
+
 }
 
 void Admin::on_btnDoctors_clicked()
 {
     QStringList listDoctors = db.getDoctorsList();
     lWDoctors->addItems(listDoctors);
-    stackWidget->setCurrentWidget(lWDoctors);
+    infoStack->setCurrentWidget(lWDoctors);
     menuStack->setCurrentWidget(doctorMenu);
 }
 
@@ -106,7 +123,7 @@ void Admin::on_btnPatients_clicked()
 {
     QStringList listPatient = db.getPatientList();
     lwPatient->addItems(listPatient);
-    stackWidget->setCurrentWidget(lwPatient);
+    infoStack->setCurrentWidget(lwPatient);
     menuStack->setCurrentWidget(patientMenu);
 
 }
@@ -124,10 +141,6 @@ void Admin:: showMainMenu()
     lwPatient->clear();
 }
 
-void Admin::on_btnAddPatient()
-{
-
-}
 
 void Admin::on_btnRemovePatient()
 {
@@ -145,4 +158,67 @@ void Admin::on_btnRemovePatient()
        lwPatient->addItems(updateList);
    }
 }
+
+void Admin::on_btnAddPatient1()
+{
+    menuStack->setCurrentWidget(patientAddMenu);
+    infoStack->setCurrentWidget(infoAddPatient);
+}
+
+void Admin::on_btnAddPatient2()
+{
+    // db.addPatient
+}
+
+void Admin::on_btnBackPatInList()
+{
+    menuStack->setCurrentWidget(patientMenu);
+    infoStack->setCurrentWidget(lwPatient);
+}
+
+void Admin::design_infoAddPatient()
+{
+
+    nameLt = new QHBoxLayout();
+    lastNameLt = new QHBoxLayout();
+    dateLt = new QHBoxLayout();
+    phoneLt = new QHBoxLayout();
+    addPatLt = new QVBoxLayout(infoAddPatient);
+
+    lEditName = new QLineEdit(this);
+    lEditLastName = new QLineEdit(this);
+    lEditDate = new QLineEdit(this);
+    lEditPhone = new QLineEdit(this);
+
+    lEditName->setPlaceholderText("Иван");
+    lEditLastName->setPlaceholderText("Иванов");
+    lEditDate->setPlaceholderText("год-месяц-день");
+    lEditPhone->setPlaceholderText("+7 901 194 32 66");
+
+    lbLogo = new QLabel(this);
+    lbName = new QLabel("Имя: ",this);
+    lbLastName = new QLabel("Фамилия: ",this);
+    lbDate = new QLabel("Дата: ",this);
+    lbPhone = new QLabel("Телефон: ",this);
+
+
+    nameLt->addWidget(lbName);
+    nameLt->addWidget(lEditName);
+
+    lastNameLt->addWidget(lbLastName);
+    lastNameLt->addWidget(lEditLastName);
+
+    dateLt->addWidget(lbDate);
+    dateLt->addWidget(lEditDate);
+
+    phoneLt->addWidget(lbPhone);
+    phoneLt->addWidget(lEditPhone);
+
+
+    addPatLt->addLayout(nameLt);
+    addPatLt->addLayout(lastNameLt);
+    addPatLt->addLayout(dateLt);
+    addPatLt->addLayout(phoneLt);
+}
+
 Admin::~Admin() {}
