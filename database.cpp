@@ -75,7 +75,7 @@ QStringList DataBase::getDoctorsList()
 {
 
     QSqlRecord rec;
-    QString str_t = "SELECT name, last_name, specialization FROM public.doctors";
+    QString str_t = "SELECT id, name, last_name, specialization FROM public.doctors ORDER BY id";
 
     db_input = str_t;
 
@@ -90,8 +90,9 @@ QStringList DataBase::getDoctorsList()
         QString doctorName = query.value(rec.indexOf("name")).toString();
         QString doctorLastName = query.value(rec.indexOf("last_name")).toString();
         QString doctorSpecialization = query.value(rec.indexOf("specialization")).toString();
+        QString id = query.value(rec.indexOf("id")).toString();
 
-        QString doctorInfo = doctorName + " " + doctorLastName + " - " + doctorSpecialization;
+        QString doctorInfo = id + " : " + doctorName + " " + doctorLastName + " - " + doctorSpecialization;
         doctorsList.append(doctorInfo);
     }
 
@@ -101,7 +102,7 @@ QStringList DataBase::getDoctorsList()
 QStringList DataBase::getPatientList()
 {
     QSqlRecord rec;
-    QString str_t = "SELECT name, last_name, date_birth FROM public.Patient";
+    QString str_t = "SELECT id, name, last_name FROM public.Patient ORDER BY id";
 
     db_input = str_t;
 
@@ -115,12 +116,30 @@ QStringList DataBase::getPatientList()
         rec = query.record();
         QString name = query.value(rec.indexOf("name")).toString();
         QString last_name =   query.value(rec.indexOf("last_name")).toString();
-        QString phone =  query.value(rec.indexOf("date_birth")).toString();;
+        QString id =  query.value(rec.indexOf("id")).toString();
 
-        QString patientInfo = name + " " + last_name + " | Дата рождения: " + phone;
+        QString patientInfo = id + " : " + name + " " + last_name;
         patientList.append(patientInfo);
     }
     return patientList;
 }
+
+void DataBase::removePatient(const QString& ID)
+{
+    query.prepare("DELETE FROM public.Patient WHERE id = :ID");
+    query.bindValue(":ID", ID);
+
+    if (!query.exec())
+    {
+        qDebug() << "Ошибка удаления пациента " << query.lastError().text();
+    }
+
+    QString resetSeqQuery = "SELECT setval('Patient_id_seq', (SELECT max(id) FROM public.Patient))";
+    if (!execQuery(query, resetSeqQuery))
+    {
+        qDebug() << "Ошибка при сбросе последовательности: " << query.lastError().text();
+    }
+}
+
 
 DataBase::~DataBase(){}

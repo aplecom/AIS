@@ -13,6 +13,7 @@ public:
     bool execQuery(QSqlQuery& query, QString& db_input);
     QStringList getDoctorsList();
     QStringList getPatientList();
+    void removePatient(const QString& ID);
 private:
     QSqlDatabase db;
     QString db_input;

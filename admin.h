@@ -24,6 +24,10 @@ private slots:
     void on_btnDoctors_clicked();
     void on_btnPatients_clicked();
     void on_btnExit_clicked();
+    void showMainMenu();
+    void on_btnAddPatient(); // не в разработке
+    void on_btnRemovePatient();
+
 
 private:
     const int WIDTH = 1200;
@@ -31,13 +35,32 @@ private:
 
     QWidget* mainWindow;
     DataBase &db;
-    QPushButton *btnDoctors, *btnPatients, *btnExit;
+
+    QPushButton* btnDoctors;
+    QPushButton* btnPatients;
+    QPushButton* btnExit;
+    QPushButton* btnBack1;
+    QPushButton* btnBack2;
+    QPushButton* btnAddPatient;
+    QPushButton* btnRemovePatient;
+
     QGridLayout* gLayout;
-    QVBoxLayout* vLayout;
+    QVBoxLayout* doctorsMenuLayout;
+    QVBoxLayout* patienstMenuMenuLayout;
+    QVBoxLayout* mainMenuLayout;
+
     QLabel* lbLogo;
+
     QStackedWidget* stackWidget;
+    QStackedWidget* menuStack;
+
     QListWidget* lWDoctors;
     QListWidget* lwPatient;
+
+    QWidget* mainMenu;
+    QWidget* doctorMenu;
+    QWidget* patientMenu;
+
 
 };
 
