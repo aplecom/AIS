@@ -1,9 +1,7 @@
 #include "database.h"
 
 DataBase::DataBase()
-{
-
-}
+{}
 
 void DataBase::createConnection()
 {
@@ -141,5 +139,21 @@ void DataBase::removePatient(const QString& ID)
     }
 }
 
+void DataBase::addPatient(const QString& name, const QString& last_name, const QDate& date, const QString& phone)
+{
+    QString str = "INSERT INTO public.Patient (name, last_name, date_birth, phone)"
+                  " VALUES (:name, :last_name, :date, :phone);";
+    db_input = str;
+    query.prepare(db_input);
+    query.bindValue(":name",name);
+    query.bindValue(":last_name",last_name);
+    query.bindValue(":date",date.toString("yyyy-MM-dd"));
+    query.bindValue(":phone",phone);
+
+    if(!query.exec())
+        qDebug()<<"Не удалось добавить данные в БД"<<query.lastError().text();
+    else
+        qDebug()<<"Успешно! Данные добавились в БД";
+}
 
 DataBase::~DataBase(){}

@@ -49,8 +49,13 @@ void Admin::admDesign()
 
     doctorMenu = new QWidget();
     doctorsMenuLayout = new QVBoxLayout(doctorMenu);
+    btnAddMeet = new QPushButton("Добавить прием",this);
+    btnLookMeetings = new QPushButton("Посмотреть приемы",this);
     btnBackDocInMenu = new QPushButton("Назад", this);
+    doctorsMenuLayout->addWidget(btnAddMeet);
+    doctorsMenuLayout->addWidget(btnLookMeetings);
     doctorsMenuLayout->addWidget(btnBackDocInMenu);
+
 
     patientMenu = new QWidget();
     patienstMenuLayout = new QVBoxLayout(patientMenu);
@@ -100,7 +105,7 @@ void Admin::admDesign()
 
     patientAddMenu = new QWidget();
     patientsAddLayout = new QVBoxLayout(patientAddMenu);
-    btnAddPatient2 = new QPushButton("+",this);
+    btnAddPatient2 = new QPushButton("Добавить пациента",this);
     btnBackPatInList = new QPushButton("Назад к списку",this);
     patientsAddLayout->addWidget(btnAddPatient2);
     patientsAddLayout->addWidget(btnBackPatInList);
@@ -162,17 +167,75 @@ void Admin::on_btnRemovePatient()
 void Admin::on_btnAddPatient1()
 {
     menuStack->setCurrentWidget(patientAddMenu);
+    lEditName->clear();
+    lEditLastName->clear();
+    lEditPhone->clear();
     infoStack->setCurrentWidget(infoAddPatient);
 }
 
 void Admin::on_btnAddPatient2()
 {
-    // db.addPatient
+    QString name = lEditName->text();
+    QString lastN = lEditLastName->text();
+    QDate date = lEditDate->date();
+    QString phone = lEditPhone->text();
+
+    bool ok_phone;
+    bool not_name;
+    bool not_lastName;
+    phone.toInt(&ok_phone);
+    name.toInt(&not_name);
+    lastN.toInt(&not_lastName);
+
+    if(name.isEmpty() || not_name)
+    {
+        lEditName->clear();
+        clearInfoLb();
+        qDebug()<<"Некорректное имя!";
+        infoName->setText("Некорректное имя!");
+        return;
+    }
+
+    else if(lastN.isEmpty() || not_lastName)
+    {
+        lEditLastName->clear();
+        clearInfoLb();
+        qDebug()<<"Некорректная фамилия!";
+        infoLastName->setText("Некорректная фамилия!");
+        return;
+    }
+
+    else if(!date.isValid())
+    {
+       clearInfoLb();
+       qDebug()<<"Некорректная дата!";
+       infoDate->setText("Некорректная дата!");
+       return;
+    }
+    else if(!ok_phone && phone.length()!=11)
+    {
+        lEditPhone->clear();
+        clearInfoLb();
+        qDebug()<<"Некорректный телефон!";
+        infoPhone->setText("Некорректный телефон!");
+        return;
+    }
+    else
+    {
+        db.addPatient(name,lastN,date,phone);
+        clearInfoLb();
+        clearDatePatLb();
+        sucAddPat->setText("Пациент успешно добавлен!");
+    }
 }
 
 void Admin::on_btnBackPatInList()
 {
     menuStack->setCurrentWidget(patientMenu);
+
+    lwPatient->clear();
+    lwPatient->addItems(db.getPatientList());
+
     infoStack->setCurrentWidget(lwPatient);
 }
 
@@ -187,13 +250,12 @@ void Admin::design_infoAddPatient()
 
     lEditName = new QLineEdit(this);
     lEditLastName = new QLineEdit(this);
-    lEditDate = new QLineEdit(this);
+    lEditDate = new QDateEdit(this);
     lEditPhone = new QLineEdit(this);
 
     lEditName->setPlaceholderText("Иван");
     lEditLastName->setPlaceholderText("Иванов");
-    lEditDate->setPlaceholderText("год-месяц-день");
-    lEditPhone->setPlaceholderText("+7 901 194 32 66");
+    lEditPhone->setPlaceholderText("89011943266");
 
     lbLogo = new QLabel(this);
     lbName = new QLabel("Имя: ",this);
@@ -201,6 +263,13 @@ void Admin::design_infoAddPatient()
     lbDate = new QLabel("Дата: ",this);
     lbPhone = new QLabel("Телефон: ",this);
 
+
+    infoName = new QLabel(this);
+    infoLastName = new QLabel(this);
+    infoDate = new QLabel(this);
+    infoPhone = new QLabel(this);
+
+    sucAddPat = new QLabel(this);
 
     nameLt->addWidget(lbName);
     nameLt->addWidget(lEditName);
@@ -214,11 +283,41 @@ void Admin::design_infoAddPatient()
     phoneLt->addWidget(lbPhone);
     phoneLt->addWidget(lEditPhone);
 
-
     addPatLt->addLayout(nameLt);
+    addPatLt->addWidget(infoName);
+    infoName->setStyleSheet("color: red");
+
     addPatLt->addLayout(lastNameLt);
+    addPatLt->addWidget(infoLastName);
+    infoLastName->setStyleSheet("color: red");
+
     addPatLt->addLayout(dateLt);
+    addPatLt->addWidget(infoDate);
+    infoDate->setStyleSheet("color: red");
+
     addPatLt->addLayout(phoneLt);
+    addPatLt->addWidget(infoPhone);
+    infoPhone->setStyleSheet("color: red");
+
+    addPatLt->addWidget(sucAddPat);
+    sucAddPat->setStyleSheet("color: black");
+
+}
+
+void Admin::clearInfoLb()
+{
+    infoName->clear();
+    infoLastName->clear();
+    infoDate->clear();
+    infoPhone->clear();
+    sucAddPat->clear();
+}
+
+void Admin::clearDatePatLb()
+{
+    lEditName->clear();
+    lEditLastName->clear();
+    lEditPhone->clear();
 }
 
 Admin::~Admin() {}

@@ -12,6 +12,7 @@
 #include <QStackedWidget>
 #include <QListWidget>
 #include <QLineEdit>
+#include <QDateEdit>
 
 class Admin: public QWidget
 {
@@ -43,6 +44,8 @@ private:
     QPushButton* btnExit;
     QPushButton* btnBackDocInMenu;
     QPushButton* btnBackPacInMenu;
+    QPushButton* btnAddMeet;
+    QPushButton* btnLookMeetings;
     QPushButton* btnAddPatient1;
     QPushButton* btnRemovePatient;
     QPushButton* btnAddPatient2;
@@ -68,7 +71,7 @@ private:
 
     QLineEdit* lEditName;
     QLineEdit* lEditLastName;
-    QLineEdit* lEditDate;
+    QDateEdit* lEditDate;
     QLineEdit* lEditPhone;
 
     QLabel* lbLogo;
@@ -76,6 +79,13 @@ private:
     QLabel* lbLastName;
     QLabel* lbDate;
     QLabel* lbPhone;
+
+    QLabel* infoName;
+    QLabel* infoLastName;
+    QLabel* infoDate;
+    QLabel* infoPhone;
+
+    QLabel* sucAddPat;
 
     QHBoxLayout* nameLt;
     QHBoxLayout* lastNameLt;
@@ -85,8 +95,8 @@ private:
     QVBoxLayout* addPatLt;
 
     void design_infoAddPatient();
-
-
+    void clearInfoLb();
+    void clearDatePatLb();
 
 };
 
