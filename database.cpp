@@ -156,4 +156,70 @@ void DataBase::addPatient(const QString& name, const QString& last_name, const Q
         qDebug()<<"Успешно! Данные добавились в БД";
 }
 
+void DataBase::addAppointment(int doctorId, int patientId, const QDateTime& dateTime)
+{
+    QString str = "INSERT INTO public.appointments (doctor_id, patient_id, appointment_date) "
+                  "VALUES (:doctorId, :patientId, :dateTime);";
+
+    query.prepare(str);
+    query.bindValue(":doctorId", doctorId);
+    query.bindValue(":patientId", patientId);
+    query.bindValue(":dateTime", dateTime.toString("yyyy-MM-dd HH:mm:ss"));
+
+    if (!query.exec())
+        qDebug() << "Ошибка добавления приёма: " << query.lastError().text();
+    else
+        qDebug() << "Приём успешно добавлен!";
+}
+
+QStringList DataBase::getAppointmentsList()
+{
+    QSqlRecord rec;
+    QString str_t = "SELECT a.id, d.name AS doctor_name, d.last_name AS doctor_last_name, "
+                    "p.name AS patient_name, p.last_name AS patient_last_name, "
+                    "a.appointment_date "
+                    "FROM public.appointments a "
+                    "JOIN public.doctors d ON a.doctor_id = d.id "
+                    "JOIN public.patient p ON a.patient_id = p.id "
+                    "ORDER BY a.appointment_date;";
+
+    db_input = str_t;
+
+    if (!execQuery(query, db_input))
+        return QStringList("Ошибка загрузки записей");
+
+    QStringList appointmentsList;
+
+    while (query.next())
+    {
+        rec = query.record();
+        QString appointmentId = query.value(rec.indexOf("id")).toString();
+        QString doctorName = query.value(rec.indexOf("doctor_name")).toString();
+        QString doctorLastName = query.value(rec.indexOf("doctor_last_name")).toString();
+        QString patientName = query.value(rec.indexOf("patient_name")).toString();
+        QString patientLastName = query.value(rec.indexOf("patient_last_name")).toString();
+        QString appointmentDate = query.value(rec.indexOf("appointment_date")).toString();
+
+        QString appointmentInfo = appointmentId + " : Врач " + doctorName + " " + doctorLastName +
+                                  " - Пациент " + patientName + " " + patientLastName +
+                                  " - Дата: " + appointmentDate;
+        appointmentsList.append(appointmentInfo);
+    }
+
+    return appointmentsList;
+}
+
+void DataBase::removeAppointment(const QString& appointmentId)
+{
+    query.prepare("DELETE FROM public.appointments WHERE id = :id");
+    query.bindValue(":id", appointmentId);
+
+    if (!query.exec())
+        qDebug() << "Ошибка удаления приёма: " << query.lastError().text();
+    else
+        qDebug() << "Приём успешно удалён!";
+}
+
+
+
 DataBase::~DataBase(){}

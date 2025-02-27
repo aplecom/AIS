@@ -15,6 +15,9 @@ public:
     QStringList getPatientList();
     void removePatient(const QString& ID);
     void addPatient(const QString& name, const QString& last_name, const QDate& date, const QString& phone);
+    void addAppointment(int doctorId, int patientId, const QDateTime& dateTime);
+    QStringList getAppointmentsList();
+    void removeAppointment(const QString& appointmentId);
 private:
     QSqlDatabase db;
     QString db_input;

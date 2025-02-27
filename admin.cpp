@@ -13,6 +13,10 @@ Admin::Admin(DataBase &database, QWidget* mainWindow, QWidget* parent)
     connect(btnAddPatient1,&QPushButton::clicked,this,&Admin::on_btnAddPatient1);
     connect(btnAddPatient2,&QPushButton::clicked,this,&Admin::on_btnAddPatient2);
     connect(btnBackPatInList, &QPushButton::clicked,this, &Admin::on_btnBackPatInList);
+    connect(btnAddMeet, &QPushButton::clicked,this,&Admin::on_btnAddMeet);
+    connect(btnBackDocInList, &QPushButton::clicked,this, &Admin::on_btnBackDocInList);
+    connect(btnLookMeetings,&QPushButton::clicked,this,&Admin::on_btnLookMeetings);
+    connect(btnBackDocInListForLook, &QPushButton::clicked,this, &Admin::on_btnBackDocInList);
 }
 
 void Admin::admDesign()
@@ -66,9 +70,22 @@ void Admin::admDesign()
     patienstMenuLayout->addWidget(btnRemovePatient);
     patienstMenuLayout->addWidget(btnBackPacInMenu);
 
+    addMeetMenu = new QWidget();
+    meetMenuLayotC = new QVBoxLayout(addMeetMenu) ;
+    btnBackDocInList = new QPushButton("Назад",this);
+    meetMenuLayotC->addWidget(btnBackDocInList);
+
+    lookMeetingsMenu = new QWidget();
+    lookMeetingsMenuLayout =  new QVBoxLayout(lookMeetingsMenu);
+    btnBackDocInListForLook = new QPushButton("Назад", this);
+    lookMeetingsMenuLayout->addWidget(btnBackDocInListForLook);
+
+
     menuStack->addWidget(mainMenu);
     menuStack->addWidget(doctorMenu);
     menuStack->addWidget(patientMenu);
+    menuStack->addWidget(addMeetMenu);
+    menuStack->addWidget(lookMeetingsMenu);
 
     menuStack->setSizePolicy(QSizePolicy::Fixed,QSizePolicy::Expanding);
 
@@ -77,9 +94,11 @@ void Admin::admDesign()
     lWDoctors = new QListWidget();
     lwPatient = new QListWidget();
     infoAddPatient = new QWidget();
+    calendar = new QCalendarWidget();
     infoStack->addWidget(lWDoctors);
     infoStack->addWidget(lwPatient);
     infoStack->addWidget(infoAddPatient);
+    infoStack->addWidget(calendar);
 
     gLayout = new QGridLayout(this);
     gLayout->addWidget(infoStack,0,1,4,3);
@@ -235,7 +254,7 @@ void Admin::on_btnBackPatInList()
 
     lwPatient->clear();
     lwPatient->addItems(db.getPatientList());
-
+    clearInfoLb();
     infoStack->setCurrentWidget(lwPatient);
 }
 
@@ -319,5 +338,24 @@ void Admin::clearDatePatLb()
     lEditLastName->clear();
     lEditPhone->clear();
 }
+
+void Admin::on_btnAddMeet()
+{
+    menuStack->setCurrentWidget(addMeetMenu);
+    infoStack->setCurrentWidget(calendar);
+}
+
+void Admin::on_btnBackDocInList()
+{
+    menuStack->setCurrentWidget(doctorMenu);
+    infoStack->setCurrentWidget(lWDoctors);
+}
+
+void Admin::on_btnLookMeetings()
+{
+    menuStack->setCurrentWidget(lookMeetingsMenu);
+    // тут виджет справа подумать для вывода приемов
+}
+
 
 Admin::~Admin() {}
