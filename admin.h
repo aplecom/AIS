@@ -14,6 +14,8 @@
 #include <QLineEdit>
 #include <QDateEdit>
 #include <QCalendarWidget>
+#include <QMessageBox>
+#include <QDateTimeEdit>
 
 class Admin: public QWidget
 {
@@ -35,6 +37,10 @@ private slots:
     void on_btnAddMeet();
     void on_btnBackDocInList();
     void on_btnLookMeetings();
+    void on_btnSelectPatient();
+    void onCalendarDateSelected();
+    void on_btnBackCalendar();
+    void on_btnSelectPatient2();
 
 private:
     const int WIDTH = 1200;
@@ -56,20 +62,26 @@ private:
     QPushButton* btnBackPatInList;
     QPushButton* btnBackDocInList;
     QPushButton* btnBackDocInListForLook;
+    QPushButton* btnSelectPatient1;
+    QPushButton* btnSelectPatient2;
+    QPushButton* btnBackCalendar;
+
 
     QGridLayout* gLayout;
     QVBoxLayout* doctorsMenuLayout;
     QVBoxLayout* patienstMenuLayout;
     QVBoxLayout* mainMenuLayout;
     QVBoxLayout* patientsAddLayout;
-    QVBoxLayout* meetMenuLayotC;
+    QVBoxLayout* meetMenuLayoutC;
     QVBoxLayout* lookMeetingsMenuLayout;
+    QVBoxLayout* selectPatientLayout;
 
     QStackedWidget* infoStack;
     QStackedWidget* menuStack;
 
     QListWidget* lWDoctors;
     QListWidget* lwPatient;
+    QListWidget* lWAppointments;
 
     QWidget* mainMenu;
     QWidget* doctorMenu;
@@ -78,6 +90,7 @@ private:
     QWidget* infoAddPatient;
     QWidget* addMeetMenu;
     QWidget* lookMeetingsMenu;
+    QWidget* selectPatientMenu;
 
     QLineEdit* lEditName;
     QLineEdit* lEditLastName;
@@ -106,9 +119,18 @@ private:
 
     QCalendarWidget* calendar;
 
+    QDateTimeEdit* dateTimeEdit;
+
+    QWidget* calendarAndDateWidget;
+
+    QVBoxLayout* calendarLayout;
+
     void design_infoAddPatient();
     void clearInfoLb();
     void clearDatePatLb();
+
+    int doctorID, patientID;
+    QDateTime dateTime;
 
 };
 

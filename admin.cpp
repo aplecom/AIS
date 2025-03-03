@@ -17,6 +17,10 @@ Admin::Admin(DataBase &database, QWidget* mainWindow, QWidget* parent)
     connect(btnBackDocInList, &QPushButton::clicked,this, &Admin::on_btnBackDocInList);
     connect(btnLookMeetings,&QPushButton::clicked,this,&Admin::on_btnLookMeetings);
     connect(btnBackDocInListForLook, &QPushButton::clicked,this, &Admin::on_btnBackDocInList);
+    connect(btnSelectPatient1, &QPushButton::clicked,this,&Admin::on_btnSelectPatient);
+    connect(calendar, &QCalendarWidget::selectionChanged,this,&Admin::onCalendarDateSelected);
+    connect(btnBackCalendar, &QPushButton::clicked,this,&Admin::on_btnBackCalendar);
+    connect(btnSelectPatient2,&QPushButton::clicked,this,&Admin::on_btnSelectPatient2);
 }
 
 void Admin::admDesign()
@@ -71,9 +75,19 @@ void Admin::admDesign()
     patienstMenuLayout->addWidget(btnBackPacInMenu);
 
     addMeetMenu = new QWidget();
-    meetMenuLayotC = new QVBoxLayout(addMeetMenu) ;
+    meetMenuLayoutC = new QVBoxLayout(addMeetMenu) ;
     btnBackDocInList = new QPushButton("Назад",this);
-    meetMenuLayotC->addWidget(btnBackDocInList);
+    btnSelectPatient1 = new QPushButton("Выбрать пациента",this);
+    meetMenuLayoutC->addWidget(btnSelectPatient1);
+    meetMenuLayoutC->addWidget(btnBackDocInList);
+
+    selectPatientMenu = new QWidget();
+    selectPatientLayout = new QVBoxLayout(selectPatientMenu);
+    btnSelectPatient2 = new QPushButton("Выбрать",this);
+    btnBackCalendar = new QPushButton("Назад",this);
+    selectPatientLayout->addWidget(btnSelectPatient2);
+    selectPatientLayout->addWidget(btnBackCalendar);
+
 
     lookMeetingsMenu = new QWidget();
     lookMeetingsMenuLayout =  new QVBoxLayout(lookMeetingsMenu);
@@ -86,6 +100,7 @@ void Admin::admDesign()
     menuStack->addWidget(patientMenu);
     menuStack->addWidget(addMeetMenu);
     menuStack->addWidget(lookMeetingsMenu);
+    menuStack->addWidget(selectPatientMenu);
 
     menuStack->setSizePolicy(QSizePolicy::Fixed,QSizePolicy::Expanding);
 
@@ -93,12 +108,23 @@ void Admin::admDesign()
 
     lWDoctors = new QListWidget();
     lwPatient = new QListWidget();
+    lWAppointments = new QListWidget();
     infoAddPatient = new QWidget();
     calendar = new QCalendarWidget();
+    dateTimeEdit = new QDateTimeEdit();
+
+    dateTimeEdit->setDateTime(QDateTime::currentDateTime());
+
+    calendarAndDateWidget = new QWidget();
+    calendarLayout = new QVBoxLayout(calendarAndDateWidget);
+    calendarLayout->addWidget(calendar);
+    calendarLayout->addWidget(dateTimeEdit);
+
     infoStack->addWidget(lWDoctors);
     infoStack->addWidget(lwPatient);
+    infoStack->addWidget(lWAppointments);
     infoStack->addWidget(infoAddPatient);
-    infoStack->addWidget(calendar);
+    infoStack->addWidget(calendarAndDateWidget);
 
     gLayout = new QGridLayout(this);
     gLayout->addWidget(infoStack,0,1,4,3);
@@ -149,7 +175,6 @@ void Admin::on_btnPatients_clicked()
     lwPatient->addItems(listPatient);
     infoStack->setCurrentWidget(lwPatient);
     menuStack->setCurrentWidget(patientMenu);
-
 }
 
 void Admin::on_btnExit_clicked()
@@ -342,7 +367,7 @@ void Admin::clearDatePatLb()
 void Admin::on_btnAddMeet()
 {
     menuStack->setCurrentWidget(addMeetMenu);
-    infoStack->setCurrentWidget(calendar);
+    infoStack->setCurrentWidget(calendarAndDateWidget);
 }
 
 void Admin::on_btnBackDocInList()
@@ -354,8 +379,66 @@ void Admin::on_btnBackDocInList()
 void Admin::on_btnLookMeetings()
 {
     menuStack->setCurrentWidget(lookMeetingsMenu);
-    // тут виджет справа подумать для вывода приемов
+    QListWidgetItem* selectedItem = lWDoctors->currentItem();
+    if(!selectedItem)
+    {
+       // первый элемент всегда будет в selectedItem
+       QMessageBox::warning(this,"Ошибка","Выберите врача из списка.");
+       return;
+    }
+    else
+    {
+        qDebug()<<"Текущий элемент: "<<selectedItem->text()<<endl;
+        QString selectedDoctor = selectedItem->text();
+        QStringList parts = selectedDoctor.split(" : ");
+        QString doctorId = parts[0];
+        doctorID = doctorId.toInt();
+        QStringList updateList = db.getAppointmentsList(doctorID);
+        lWAppointments->addItems(updateList);
+        infoStack->setCurrentWidget(lWAppointments);
+    }
 }
 
+void Admin::on_btnSelectPatient()
+{
+    menuStack->setCurrentWidget(selectPatientMenu);
+
+    lwPatient->clear();
+    QStringList listPatient = db.getPatientList();
+    lwPatient->addItems(listPatient);
+    infoStack->setCurrentWidget(lwPatient);
+
+}
+
+void Admin::onCalendarDateSelected()
+{
+    QDate selectedDate = calendar->selectedDate();
+    dateTimeEdit->setDate(selectedDate);
+
+    QTime selectedTime = dateTimeEdit->time();
+    QDate selectedDate2 = dateTimeEdit->date();
+
+    dateTime = QDateTime(selectedDate2,selectedTime);
+
+}
+
+void Admin::on_btnBackCalendar()
+{
+    menuStack->setCurrentWidget(addMeetMenu);
+    infoStack->setCurrentWidget(calendarAndDateWidget);
+}
+
+void Admin::on_btnSelectPatient2()
+{
+    QListWidgetItem* selectedItem = lwPatient->currentItem();
+
+    QString selectedPatient = selectedItem->text();
+    QStringList parts = selectedPatient.split(" : ");
+    QString patientId = parts[0];
+    patientID = patientId.toInt();
+    db.addAppointment(doctorID,patientID,dateTime);
+    doctorID = -1;
+    patientID = -1;
+}
 
 Admin::~Admin() {}
