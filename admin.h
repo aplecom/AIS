@@ -16,6 +16,7 @@
 #include <QCalendarWidget>
 #include <QMessageBox>
 #include <QDateTimeEdit>
+#include <QTableWidget>
 
 class Admin: public QWidget
 {
@@ -81,7 +82,7 @@ private:
 
     QListWidget* lWDoctors;
     QListWidget* lwPatient;
-    QListWidget* lWAppointments;
+    QTableWidget* tbAppointments;
 
     QWidget* mainMenu;
     QWidget* doctorMenu;

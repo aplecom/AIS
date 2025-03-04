@@ -4,6 +4,7 @@ Admin::Admin(DataBase &database, QWidget* mainWindow, QWidget* parent)
     : QWidget(parent), db(database), mainWindow(mainWindow)
 {
     admDesign();
+
     connect(btnDoctors,&QPushButton::clicked,this,&Admin::on_btnDoctors_clicked);
     connect(btnPatients, &QPushButton::clicked, this, &Admin::on_btnPatients_clicked);
     connect(btnExit,&QPushButton::clicked, this, &Admin::on_btnExit_clicked);
@@ -108,7 +109,8 @@ void Admin::admDesign()
 
     lWDoctors = new QListWidget();
     lwPatient = new QListWidget();
-    lWAppointments = new QListWidget();
+    tbAppointments = new QTableWidget();
+
     infoAddPatient = new QWidget();
     calendar = new QCalendarWidget();
     dateTimeEdit = new QDateTimeEdit();
@@ -122,7 +124,7 @@ void Admin::admDesign()
 
     infoStack->addWidget(lWDoctors);
     infoStack->addWidget(lwPatient);
-    infoStack->addWidget(lWAppointments);
+    infoStack->addWidget(tbAppointments);
     infoStack->addWidget(infoAddPatient);
     infoStack->addWidget(calendarAndDateWidget);
 
@@ -366,6 +368,13 @@ void Admin::clearDatePatLb()
 
 void Admin::on_btnAddMeet()
 {
+    QListWidgetItem* selectedItem = lWDoctors->currentItem();
+    qDebug()<<"Текущий доктор: "<<selectedItem->text()<<endl;
+    QString selectedDoctor = selectedItem->text();
+    QStringList parts = selectedDoctor.split(" : ");
+    QString doctorId = parts[0];
+    doctorID = doctorId.toInt();
+
     menuStack->setCurrentWidget(addMeetMenu);
     infoStack->setCurrentWidget(calendarAndDateWidget);
 }
@@ -388,14 +397,35 @@ void Admin::on_btnLookMeetings()
     }
     else
     {
-        qDebug()<<"Текущий элемент: "<<selectedItem->text()<<endl;
+        qDebug()<<"Текущий доктор: "<<selectedItem->text()<<endl;
+
         QString selectedDoctor = selectedItem->text();
         QStringList parts = selectedDoctor.split(" : ");
         QString doctorId = parts[0];
         doctorID = doctorId.toInt();
-        QStringList updateList = db.getAppointmentsList(doctorID);
-        lWAppointments->addItems(updateList);
-        infoStack->setCurrentWidget(lWAppointments);
+
+        tbAppointments->clearContents();
+        tbAppointments->setRowCount(0);
+
+
+        QVector<QVector<QString>> appointmentsData = db.getAppointmentsList(doctorID);
+
+        tbAppointments->setColumnCount(4);
+        tbAppointments->setHorizontalHeaderLabels({"ID", "Пациент", "Дата", "Время"});
+
+        for (int row = 0; row < appointmentsData.size(); ++row)
+            {
+                tbAppointments->insertRow(row);
+                for (int col = 0; col < 4; ++col)
+                {
+                    QTableWidgetItem* item = new QTableWidgetItem(appointmentsData[row][col]);
+                    item->setFlags(Qt::ItemIsSelectable | Qt::ItemIsEnabled);
+                    tbAppointments->setItem(row, col, item);
+                }
+            }
+
+        infoStack->setCurrentWidget(tbAppointments);
+
     }
 }
 
@@ -408,18 +438,14 @@ void Admin::on_btnSelectPatient()
     lwPatient->addItems(listPatient);
     infoStack->setCurrentWidget(lwPatient);
 
+    dateTime = QDateTime(dateTimeEdit->date(),dateTimeEdit->time());
+
+    qDebug()<<"Текущая дата приёма: "<<dateTime;
 }
 
 void Admin::onCalendarDateSelected()
 {
-    QDate selectedDate = calendar->selectedDate();
-    dateTimeEdit->setDate(selectedDate);
-
-    QTime selectedTime = dateTimeEdit->time();
-    QDate selectedDate2 = dateTimeEdit->date();
-
-    dateTime = QDateTime(selectedDate2,selectedTime);
-
+    dateTimeEdit->setDate(calendar->selectedDate());
 }
 
 void Admin::on_btnBackCalendar()
@@ -431,12 +457,26 @@ void Admin::on_btnBackCalendar()
 void Admin::on_btnSelectPatient2()
 {
     QListWidgetItem* selectedItem = lwPatient->currentItem();
-
+    if(!selectedItem)
+    {
+        QMessageBox::critical(this,"Ошибка","Выберите пациента!");
+        return;
+    }
+    qDebug()<<"Текущий пациент: " + selectedItem->text();
     QString selectedPatient = selectedItem->text();
     QStringList parts = selectedPatient.split(" : ");
     QString patientId = parts[0];
     patientID = patientId.toInt();
-    db.addAppointment(doctorID,patientID,dateTime);
+
+    if(doctorID == -1) {
+        qDebug()<<"doctorID не установлен!";
+        QMessageBox::critical(this,"Ошибка","Выберите врача!");
+        return;
+    }
+
+    if(db.addAppointment(doctorID,patientID,dateTime))
+        QMessageBox::information(this,"Приём","Приём успешно доабвлен");
+
     doctorID = -1;
     patientID = -1;
 }
