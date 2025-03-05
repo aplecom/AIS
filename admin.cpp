@@ -315,12 +315,20 @@ void Admin::on_btnBackPatInList()
 
 void Admin::design_infoAddPatient()
 {
-
     nameLt = new QHBoxLayout(this);
     lastNameLt = new QHBoxLayout();
     dateLt = new QHBoxLayout();
     phoneLt = new QHBoxLayout();
-    addPatLt = new QVBoxLayout(infoAddPatient);
+    addPatLt = new QVBoxLayout();
+    QHBoxLayout* mainLayout = new QHBoxLayout(infoAddPatient);
+
+    QPixmap patient(":/img/img/patient.png");
+    patient = patient.scaled(800, 600, Qt::KeepAspectRatio);
+
+    QLabel* patientLb = new QLabel(this);
+    patientLb->setPixmap(patient);
+
+    patientLb->setFixedSize(800, 600);
 
 
     lEditName = new QLineEdit(this);
@@ -350,26 +358,26 @@ void Admin::design_infoAddPatient()
     infoDate->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Fixed);
     infoPhone->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Fixed);
 
-    infoName->setAlignment(Qt::AlignCenter);
-    infoLastName->setAlignment(Qt::AlignCenter);
-    infoDate->setAlignment(Qt::AlignCenter);
-    infoPhone->setAlignment(Qt::AlignCenter);
+    infoName->setAlignment(Qt::AlignRight);
+    infoLastName->setAlignment(Qt::AlignRight);
+    infoDate->setAlignment(Qt::AlignRight);
+    infoPhone->setAlignment(Qt::AlignRight);
 
     lbName->setAlignment(Qt::AlignRight | Qt::AlignVCenter);
     lEditName->setFixedWidth(300);
-    nameLt->setContentsMargins(0,0,300,0);
+    nameLt->setContentsMargins(100,0,0,0);
 
     lbLastName->setAlignment(Qt::AlignRight | Qt::AlignVCenter);
     lEditLastName->setFixedWidth(300);
-    lastNameLt->setContentsMargins(0,0,300,0);
+    lastNameLt->setContentsMargins(100,0,0,0);
 
     lbDate->setAlignment(Qt::AlignRight | Qt::AlignVCenter);
     lEditDate->setFixedWidth(300);
-    dateLt->setContentsMargins(0,0,300,0);
+    dateLt->setContentsMargins(100,0,0,0);
 
     lbPhone->setAlignment(Qt::AlignRight | Qt::AlignVCenter);
     lEditPhone->setFixedWidth(300);
-    phoneLt->setContentsMargins(0,0,300,0);
+    phoneLt->setContentsMargins(100,0,0,0);
 
 
     nameLt->addWidget(lbName);
@@ -399,6 +407,9 @@ void Admin::design_infoAddPatient()
     addPatLt->addLayout(phoneLt);
     addPatLt->addWidget(infoPhone);
     infoPhone->setStyleSheet("color: red");
+
+    mainLayout->addLayout(addPatLt);
+    mainLayout->addWidget(patientLb);
 }
 
 void Admin::clearInfoLb()
