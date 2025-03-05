@@ -158,22 +158,31 @@ void DataBase::addPatient(const QString& name, const QString& last_name, const Q
 
 bool DataBase::addAppointment(int& doctorId, int& patientId, const QDateTime& dateTime)
 {
-    QString str = "INSERT INTO public.appointments (doctor_id, patient_id, appointment_date) "
-                  "VALUES (:doctorId, :patientId, :dateTime);";
+    int newId = 1;
+    QSqlQuery query;
 
-    query.prepare(str);
+    query.prepare("SELECT COALESCE(MAX(id), 0) + 1 FROM appointments;");
+    if (query.exec() && query.next())
+        newId = query.value(0).toInt();
+
+    query.prepare("INSERT INTO public.appointments (id, doctor_id, patient_id, appointment_date) "
+                  "VALUES (:id, :doctorId, :patientId, :dateTime);");
+
+    query.bindValue(":id", newId);
     query.bindValue(":doctorId", doctorId);
     query.bindValue(":patientId", patientId);
     query.bindValue(":dateTime", dateTime.toString("yyyy-MM-dd HH:mm:ss"));
 
     if (!query.exec())
+    {
         qDebug() << "Ошибка добавления приёма: " << query.lastError().text();
+        return false;
+    }
     else
     {
-        qDebug() << "Приём успешно добавлен!";
+        qDebug() << "Приём успешно добавлен с ID: " << newId;
         return true;
     }
-    return false;
 }
 
 QVector<QVector<QString>> DataBase::getAppointmentsList(int doctor_id)
@@ -214,16 +223,20 @@ QVector<QVector<QString>> DataBase::getAppointmentsList(int doctor_id)
 }
 
 
-void DataBase::removeAppointment(const QString& appointmentId)
+bool DataBase::removeAppointment(const QString& appointmentId)
 {
     query.prepare("DELETE FROM public.appointments WHERE id = :id");
     query.bindValue(":id", appointmentId);
 
     if (!query.exec())
+    {
         qDebug() << "Ошибка удаления приёма: " << query.lastError().text();
+        return false;
+    }
     else
     {
         qDebug() << "Приём успешно удалён!";
+        return true;;
     }
 }
 

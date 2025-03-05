@@ -74,6 +74,8 @@ void MainWindow::on_btnLogIn_button_clicked()
         admin = new Admin(db,this);
         admin->show();
     }
+    else
+        QMessageBox::warning(this,"Ошибка входа","Данной учетной записи не существует!");
 }
 
 MainWindow:: ~MainWindow(){

@@ -17,6 +17,8 @@
 #include <QMessageBox>
 #include <QDateTimeEdit>
 #include <QTableWidget>
+#include <QHeaderView>
+
 
 class Admin: public QWidget
 {
@@ -42,6 +44,7 @@ private slots:
     void onCalendarDateSelected();
     void on_btnBackCalendar();
     void on_btnSelectPatient2();
+    void on_btnRemoveMeet();
 
 private:
     const int WIDTH = 1200;
@@ -66,6 +69,7 @@ private:
     QPushButton* btnSelectPatient1;
     QPushButton* btnSelectPatient2;
     QPushButton* btnBackCalendar;
+    QPushButton* btnRemoveMeet;
 
 
     QGridLayout* gLayout;
@@ -76,6 +80,7 @@ private:
     QVBoxLayout* meetMenuLayoutC;
     QVBoxLayout* lookMeetingsMenuLayout;
     QVBoxLayout* selectPatientLayout;
+    QVBoxLayout* tableLayout;
 
     QStackedWidget* infoStack;
     QStackedWidget* menuStack;
@@ -92,6 +97,7 @@ private:
     QWidget* addMeetMenu;
     QWidget* lookMeetingsMenu;
     QWidget* selectPatientMenu;
+    QWidget* tbMeetWiget;
 
     QLineEdit* lEditName;
     QLineEdit* lEditLastName;
@@ -109,7 +115,6 @@ private:
     QLabel* infoDate;
     QLabel* infoPhone;
 
-    QLabel* sucAddPat;
 
     QHBoxLayout* nameLt;
     QHBoxLayout* lastNameLt;

@@ -17,7 +17,7 @@ public:
     void addPatient(const QString& name, const QString& last_name, const QDate& date, const QString& phone);
     bool addAppointment(int& doctorId, int& patientId, const QDateTime& dateTime);
     QVector<QVector<QString>> getAppointmentsList(int doctor_id);
-    void removeAppointment(const QString& appointmentId);
+    bool removeAppointment(const QString& appointmentId);
 private:
     QSqlDatabase db;
     QString db_input;

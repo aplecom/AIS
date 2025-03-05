@@ -4,7 +4,6 @@ Admin::Admin(DataBase &database, QWidget* mainWindow, QWidget* parent)
     : QWidget(parent), db(database), mainWindow(mainWindow)
 {
     admDesign();
-
     connect(btnDoctors,&QPushButton::clicked,this,&Admin::on_btnDoctors_clicked);
     connect(btnPatients, &QPushButton::clicked, this, &Admin::on_btnPatients_clicked);
     connect(btnExit,&QPushButton::clicked, this, &Admin::on_btnExit_clicked);
@@ -22,6 +21,7 @@ Admin::Admin(DataBase &database, QWidget* mainWindow, QWidget* parent)
     connect(calendar, &QCalendarWidget::selectionChanged,this,&Admin::onCalendarDateSelected);
     connect(btnBackCalendar, &QPushButton::clicked,this,&Admin::on_btnBackCalendar);
     connect(btnSelectPatient2,&QPushButton::clicked,this,&Admin::on_btnSelectPatient2);
+    connect(btnRemoveMeet,&QPushButton::clicked,this,&Admin::on_btnRemoveMeet);
 }
 
 void Admin::admDesign()
@@ -49,7 +49,6 @@ void Admin::admDesign()
     lbLogo = new QLabel(this);
     lbLogo->setPixmap(logo);
     lbLogo->setFixedSize(200,200);
-
 
     mainMenuLayout->addWidget(lbLogo);
     mainMenuLayout->addWidget(btnDoctors);
@@ -92,9 +91,10 @@ void Admin::admDesign()
 
     lookMeetingsMenu = new QWidget();
     lookMeetingsMenuLayout =  new QVBoxLayout(lookMeetingsMenu);
+    btnRemoveMeet = new QPushButton("Удалить приём",this);
     btnBackDocInListForLook = new QPushButton("Назад", this);
+    lookMeetingsMenuLayout->addWidget(btnRemoveMeet);
     lookMeetingsMenuLayout->addWidget(btnBackDocInListForLook);
-
 
     menuStack->addWidget(mainMenu);
     menuStack->addWidget(doctorMenu);
@@ -122,9 +122,15 @@ void Admin::admDesign()
     calendarLayout->addWidget(calendar);
     calendarLayout->addWidget(dateTimeEdit);
 
+    tbMeetWiget = new QWidget();
+    tableLayout = new QVBoxLayout(tbMeetWiget);
+    tableLayout->addWidget(tbAppointments);
+    tbAppointments->horizontalHeader()->setSectionResizeMode(QHeaderView::Stretch);
+
+
     infoStack->addWidget(lWDoctors);
     infoStack->addWidget(lwPatient);
-    infoStack->addWidget(tbAppointments);
+    infoStack->addWidget(tbMeetWiget);
     infoStack->addWidget(infoAddPatient);
     infoStack->addWidget(calendarAndDateWidget);
 
@@ -136,19 +142,40 @@ void Admin::admDesign()
     infoStack->setStyleSheet("font-size: 20px; ");
 
     this->setStyleSheet(
-    "QPushButton {"
-    " font-size: 20px;"
-    " border-radius: 10px;"
-    " border: 2px solid black;"
-    " padding: 10px;"
-    " background-color: white;"
-    "}"
-    " QPushButton:hover {"
-    " background-color: rgb(3, 198, 252);"
-    " }"
-    " QPushButton:pressed {"
-    " background-color: rgb(3, 240, 252);"
-    "}");
+        "QPushButton {"
+        " font-size: 20px;"
+        " border-radius: 10px;"
+        " border: 2px solid black;"
+        " padding: 10px;"
+        " background-color: white;"
+        "}"
+        " QPushButton:hover {"
+        " background-color: rgb(3, 198, 252);"
+        " }"
+        " QPushButton:pressed {"
+        " background-color: rgb(3, 240, 252);"
+        "}"
+        " QLineEdit {"
+        " font-size: 20px;"
+        " border-radius: 10px;"
+        " border: 2px solid black;"
+        " padding: 10px;"
+        " background-color: white;"
+        "}"
+        " QDateTimeEdit {"
+        " font-size: 20px;"
+        " border-radius: 10px;"
+        " border: 2px solid black;"
+        " padding: 10px;"
+        " background-color: white;"
+        "}"
+        " QDateTimeEdit::drop-down {"
+        " subcontrol-origin: padding;"
+        " subcontrol-position: center right;"
+        " width: 20px;"
+        " border-left: 1px solid black;"
+        "}"
+    );
 
     patientAddMenu = new QWidget();
     patientsAddLayout = new QVBoxLayout(patientAddMenu);
@@ -217,6 +244,7 @@ void Admin::on_btnAddPatient1()
     lEditLastName->clear();
     lEditPhone->clear();
     infoStack->setCurrentWidget(infoAddPatient);
+    //infoAddPatient->setStyleSheet("border-radius: 10px; border: 2px solid black;");
 }
 
 void Admin::on_btnAddPatient2()
@@ -271,7 +299,7 @@ void Admin::on_btnAddPatient2()
         db.addPatient(name,lastN,date,phone);
         clearInfoLb();
         clearDatePatLb();
-        sucAddPat->setText("Пациент успешно добавлен!");
+        QMessageBox::information(this,"Успешно!","Пациент успешно добавлен!");
     }
 }
 
@@ -288,11 +316,12 @@ void Admin::on_btnBackPatInList()
 void Admin::design_infoAddPatient()
 {
 
-    nameLt = new QHBoxLayout();
+    nameLt = new QHBoxLayout(this);
     lastNameLt = new QHBoxLayout();
     dateLt = new QHBoxLayout();
     phoneLt = new QHBoxLayout();
     addPatLt = new QVBoxLayout(infoAddPatient);
+
 
     lEditName = new QLineEdit(this);
     lEditLastName = new QLineEdit(this);
@@ -302,6 +331,7 @@ void Admin::design_infoAddPatient()
     lEditName->setPlaceholderText("Иван");
     lEditLastName->setPlaceholderText("Иванов");
     lEditPhone->setPlaceholderText("89011943266");
+
 
     lbLogo = new QLabel(this);
     lbName = new QLabel("Имя: ",this);
@@ -315,7 +345,32 @@ void Admin::design_infoAddPatient()
     infoDate = new QLabel(this);
     infoPhone = new QLabel(this);
 
-    sucAddPat = new QLabel(this);
+    infoName->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Fixed);
+    infoLastName->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Fixed);
+    infoDate->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Fixed);
+    infoPhone->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Fixed);
+
+    infoName->setAlignment(Qt::AlignCenter);
+    infoLastName->setAlignment(Qt::AlignCenter);
+    infoDate->setAlignment(Qt::AlignCenter);
+    infoPhone->setAlignment(Qt::AlignCenter);
+
+    lbName->setAlignment(Qt::AlignRight | Qt::AlignVCenter);
+    lEditName->setFixedWidth(300);
+    nameLt->setContentsMargins(0,0,300,0);
+
+    lbLastName->setAlignment(Qt::AlignRight | Qt::AlignVCenter);
+    lEditLastName->setFixedWidth(300);
+    lastNameLt->setContentsMargins(0,0,300,0);
+
+    lbDate->setAlignment(Qt::AlignRight | Qt::AlignVCenter);
+    lEditDate->setFixedWidth(300);
+    dateLt->setContentsMargins(0,0,300,0);
+
+    lbPhone->setAlignment(Qt::AlignRight | Qt::AlignVCenter);
+    lEditPhone->setFixedWidth(300);
+    phoneLt->setContentsMargins(0,0,300,0);
+
 
     nameLt->addWidget(lbName);
     nameLt->addWidget(lEditName);
@@ -344,10 +399,6 @@ void Admin::design_infoAddPatient()
     addPatLt->addLayout(phoneLt);
     addPatLt->addWidget(infoPhone);
     infoPhone->setStyleSheet("color: red");
-
-    addPatLt->addWidget(sucAddPat);
-    sucAddPat->setStyleSheet("color: black");
-
 }
 
 void Admin::clearInfoLb()
@@ -356,7 +407,6 @@ void Admin::clearInfoLb()
     infoLastName->clear();
     infoDate->clear();
     infoPhone->clear();
-    sucAddPat->clear();
 }
 
 void Admin::clearDatePatLb()
@@ -392,7 +442,7 @@ void Admin::on_btnLookMeetings()
     if(!selectedItem)
     {
        // первый элемент всегда будет в selectedItem
-       QMessageBox::warning(this,"Ошибка","Выберите врача из списка.");
+       QMessageBox::critical(this,"Ошибка","Выберите врача из списка.");
        return;
     }
     else
@@ -423,8 +473,7 @@ void Admin::on_btnLookMeetings()
                     tbAppointments->setItem(row, col, item);
                 }
             }
-
-        infoStack->setCurrentWidget(tbAppointments);
+        infoStack->setCurrentWidget(tbMeetWiget);
 
     }
 }
@@ -475,10 +524,29 @@ void Admin::on_btnSelectPatient2()
     }
 
     if(db.addAppointment(doctorID,patientID,dateTime))
-        QMessageBox::information(this,"Приём","Приём успешно доабвлен");
+        QMessageBox::information(this,"Приём","Приём успешно добавлен!");
 
     doctorID = -1;
     patientID = -1;
+}
+
+void Admin::on_btnRemoveMeet()
+{
+    int row = tbAppointments->currentRow();
+    if(row==-1)
+    {
+        QMessageBox::warning(this,"Ошибка выбора приема","Выберите нужный прием!");
+        return;
+    }
+
+    QTableWidgetItem* item = tbAppointments->item(row,0);
+    if(!item) return;
+    QString id = item->text();
+    if(db.removeAppointment(id))
+    {
+        QMessageBox::information(this,"Приём","Приём успешно удален!");
+        emit on_btnLookMeetings();
+    }
 }
 
 Admin::~Admin() {}

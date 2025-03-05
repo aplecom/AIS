@@ -8,7 +8,7 @@
 #include <QPushButton>
 #include <QPixmap>
 #include <QPainter>
-
+#include <QMessageBox>
 
 class MainWindow: public QWidget
 {
